@@ -1,5 +1,6 @@
 package com.efarquharson.sunshine;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
@@ -96,11 +97,16 @@ public class ForecastFragment extends Fragment {
         listView.setAdapter(mForecastAdapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
                 // Get weather data for item clicked
-                String weatherDetail = mForecastAdapter.getItem(i);
-                // Create toast displaying weather information
-                Toast.makeText(getActivity(), weatherDetail, Toast.LENGTH_SHORT).show();
+                String weatherDetail = mForecastAdapter.getItem(position);
+                // Create explicit intent to launch the detail activity
+                Intent detailIntent = new Intent(getActivity(), DetailActivity.class);
+                // Pass in weather info for day selected
+                detailIntent.putExtra(Intent.EXTRA_TEXT, weatherDetail);
+                // Launch intent
+                startActivity(detailIntent);
+
             }
         });
         ///// pause
