@@ -1,8 +1,10 @@
 package com.efarquharson.sunshine;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.text.format.Time;
@@ -51,8 +53,6 @@ public class ForecastFragment extends Fragment {
     }
 
     // Inflate custom menu
-
-
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.forecastfragment, menu);
     }
@@ -63,12 +63,11 @@ public class ForecastFragment extends Fragment {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
+        // String city = getString(R.string.pref_location_default);
         if (id == R.id.action_refresh) {
-            FetchWeatherTask weatherTask = new FetchWeatherTask();
-            weatherTask.execute("94043");
+            updateWeather();
             return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -80,9 +79,8 @@ public class ForecastFragment extends Fragment {
         // create an arraylist of string to represent a static weather forecast list
         ArrayList<String> weatherArrayList = new ArrayList<>();
 
-
         // Create array adapter to populate ListView
-        mForecastAdapter = new ArrayAdapter<>(
+        mForecastAdapter = new ArrayAdapter<String>(
             // context --> fragment's parent activity
             getActivity(),
             // name of xml layout file
@@ -106,17 +104,25 @@ public class ForecastFragment extends Fragment {
                 detailIntent.putExtra(Intent.EXTRA_TEXT, weatherDetail);
                 // Launch intent
                 startActivity(detailIntent);
-
             }
         });
         ///// pause
 
         // new FetchWeatherTask().execute();
-
-
         return rootView;
+    }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        updateWeather();
+    }
 
+    private void updateWeather() {
+        FetchWeatherTask weatherTask = new FetchWeatherTask();
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        String city = preferences.getString(getString(R.string.pref_location_key), getString(R.string.pref_location_default));
+        weatherTask.execute(city);
     }
 
     public class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
