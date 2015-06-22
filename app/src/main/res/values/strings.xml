@@ -4,12 +4,37 @@
     <string name="action_refresh">Refresh</string>
     <string name="title_activity_detail">Weather Details</string>
     <string name="title_settings_activity">Settings</string>
+
+    <!-- preferences location (city) -->
     <string name="pref_location_label">Location</string>
-
-    <!-- Key name for storing location in SharedPreferences CHAR LIMIT=NONE -->
     <string name="pref_location_key" translatable="false">location</string>
-
-    <!-- Default city for location preference [CHAR LIMIT=NONE] -->
     <string name="pref_location_default" translatable="false">Toronto</string>
+
+    <!-- preferences temperature -->
+    <string name="pref_temperature_label">Temperature Units</string>
+    <string name="pref_temperature_key" translatable="false">unit</string>
+    <string name="pref_temperature_default" translatable="false">Celsius</string>
+    <string-array name="temperature_entries">
+        <item>Celsius</item>
+        <item>Fahrenheit</item>
+        <item>Kelvin</item>
+        <item>Rankine</item>
+        <item>Delisle</item>
+        <item>Newton</item>
+        <item>Réaumur</item>
+        <item>Rømer</item>
+    </string-array>
+    
+    <string-array name="temperature_entry_values">
+        <item>°C</item>
+        <item>°F</item>
+        <item>K</item>
+        <item>°R</item>
+        <item>°De</item>
+        <item>°N</item>
+        <item>°Ré</item>
+        <item>°Rø</item>
+    </string-array>
+
 
 </resources>

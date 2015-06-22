@@ -4,10 +4,12 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.preference.Preference;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.text.format.Time;
+import android.util.ArrayMap;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -33,6 +35,7 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Map;
 
 
 /**
@@ -122,10 +125,14 @@ public class ForecastFragment extends Fragment {
         FetchWeatherTask weatherTask = new FetchWeatherTask();
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
         String city = preferences.getString(getString(R.string.pref_location_key), getString(R.string.pref_location_default));
-        weatherTask.execute(city);
+        String tempUnits = preferences.getString(getString(R.string.pref_temperature_key), getString(R.string.pref_temperature_default));
+        ArrayMap weatherTaskInput = new ArrayMap<>();
+        weatherTaskInput.put("city", city);
+        weatherTaskInput.put("tempUnits", tempUnits);
+        weatherTask.execute(weatherTaskInput);
     }
 
-    public class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
+    public class FetchWeatherTask extends AsyncTask<ArrayMap<String, String>, Void, String[]> {
 
         private final String LOG_TAG = FetchWeatherTask.class.getSimpleName();
 
@@ -146,18 +153,47 @@ public class ForecastFragment extends Fragment {
         /**
          * Prepare the weather high/lows rounded
          */
-        private String formatHighLows(double high, double low) {
-            long roundedHigh = Math.round(high);
-            long roundedLow = Math.round(low);
+        private String formatHighLows(double high, double low, String tempUnits) {
 
-            String highLowStr = roundedHigh + "/" + roundedLow;
+            long roundedHigh;
+            long roundedLow;
+
+            if (tempUnits.equals("°C")) {
+                roundedHigh = Math.round(high);
+                roundedLow = Math.round(low);
+            } else if (tempUnits.equals("°F")) {
+                roundedHigh = Math.round((high*1.8)+32);
+                roundedLow = Math.round((low*1.8)+32);
+            } else if (tempUnits.equals("K")) {
+                roundedHigh = Math.round(high+273.15);
+                roundedLow = Math.round(low+273.15);
+            } else if (tempUnits.equals("°R")) {
+                roundedHigh = Math.round((high+273.15)*1.8);
+                roundedLow = Math.round((low+273.15)*1.8);
+            } else if (tempUnits.equals("°De")) {
+                roundedHigh = Math.round((100-high)*(3/2));
+                roundedLow = Math.round((100-low)*(3/2));
+            } else if (tempUnits.equals("°N")) {
+                roundedHigh = Math.round(high*33/100);
+                roundedLow = Math.round(low*33/100);
+            } else if (tempUnits.equals("°Ré")) {
+                roundedHigh = Math.round(high*4/5);
+                roundedLow = Math.round(low*4/5);
+            } else if (tempUnits.equals("°Rø")) {
+                roundedHigh = Math.round(high*21/40+7.5);
+                roundedLow = Math.round(low*21/40+7.5);
+            } else {
+                roundedHigh = 404;
+                roundedLow = 404;
+            }
+            String highLowStr = "High: " + roundedHigh + tempUnits + " - Low: " + roundedLow + tempUnits;
             return highLowStr;
         }
 
         /**
          * Select the JSON data we need to construct the Strings for the wireframes.
          */
-        private String[] getWeatherDataFromJson(String forecastJsonStr, int numDays)
+        private String[] getWeatherDataFromJson(String forecastJsonStr, int numDays, String tempUnits)
                 throws JSONException {
 
             // These are the names of the JSON objects that need to be extracted.
@@ -216,7 +252,8 @@ public class ForecastFragment extends Fragment {
                 double high = temperatureObject.getDouble(OWM_MAX);
                 double low = temperatureObject.getDouble(OWM_MIN);
 
-                highAndLow = formatHighLows(high, low);
+
+                highAndLow = formatHighLows(high, low, tempUnits);
                 resultStrs[i] = day + " - " + description + " - " + highAndLow;
             }
 
@@ -239,7 +276,7 @@ public class ForecastFragment extends Fragment {
         }
 
         @Override
-        protected String[] doInBackground(String... params) {
+        protected String[] doInBackground(ArrayMap<String, String>... params) {
             /////////////////////////////////////////////////////////////////////////////////
             // Fetch JSON data
             /////////////////////////////////////////////////////////////////////////////////
@@ -275,7 +312,7 @@ public class ForecastFragment extends Fragment {
                         .appendPath("2.5")
                         .appendPath("forecast")
                         .appendPath("daily")
-                        .appendQueryParameter(QUERY_PARAM, params[0])
+                        .appendQueryParameter(QUERY_PARAM, params[0].get("city"))
                         .appendQueryParameter(FORMAT_PARAM, format)
                         .appendQueryParameter(UNITS_PARAM, units)
                         .appendQueryParameter(DAYS_PARAM, Integer.toString(numDays));
@@ -329,7 +366,7 @@ public class ForecastFragment extends Fragment {
             }
 
             try {
-                return getWeatherDataFromJson(forecastJsonStr, numDays);
+                return getWeatherDataFromJson(forecastJsonStr, numDays, params[0].get("tempUnits"));
             } catch (JSONException e) {
                 Log.e(LOG_TAG, e.getMessage(), e);
                 e.printStackTrace();
