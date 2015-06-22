@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.preference.Preference;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -126,7 +125,7 @@ public class ForecastFragment extends Fragment {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
         String city = preferences.getString(getString(R.string.pref_location_key), getString(R.string.pref_location_default));
         String tempUnits = preferences.getString(getString(R.string.pref_temperature_key), getString(R.string.pref_temperature_default));
-        ArrayMap weatherTaskInput = new ArrayMap<>();
+        ArrayMap<String, String> weatherTaskInput = new ArrayMap<String, String>();
         weatherTaskInput.put("city", city);
         weatherTaskInput.put("tempUnits", tempUnits);
         weatherTask.execute(weatherTaskInput);
@@ -186,8 +185,8 @@ public class ForecastFragment extends Fragment {
                 roundedHigh = 404;
                 roundedLow = 404;
             }
-            String highLowStr = "High: " + roundedHigh + tempUnits + " - Low: " + roundedLow + tempUnits;
-            return highLowStr;
+
+            return "High: " + roundedHigh + tempUnits + " - Low: " + roundedLow + tempUnits;
         }
 
         /**
