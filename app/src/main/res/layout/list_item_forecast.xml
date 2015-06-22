@@ -6,6 +6,8 @@
     android:id="@+id/list_item_forecast_textview"
     android:layout_gravity="center_horizontal"
     android:gravity="center_vertical|center_horizontal"
-    android:background="#ff878787"
+    android:background="#ff747474"
     android:layout_marginTop="10dp"
-    android:minHeight="?android:listPreferredItemHeight" />
+    android:minHeight="?android:listPreferredItemHeight"
+    android:text="testy"
+    android:textColor="#ffffffff" />

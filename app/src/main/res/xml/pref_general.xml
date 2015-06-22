@@ -9,7 +9,8 @@
         android:title="@string/pref_location_label"
         android:defaultValue="@string/pref_location_default"
         android:inputType="text"
-        android:singleLine="true" />
+        android:singleLine="true"
+        android:selectAllOnFocus="true" />
 
     <ListPreference
         android:key="@string/pref_temperature_key"
