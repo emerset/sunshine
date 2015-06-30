@@ -50,7 +50,7 @@ public class ForecastFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // Add this line in order for this fragment to handle maneu events
+        // Add this line in order for this fragment to handle menu events
         setHasOptionsMenu(true);
     }
 
@@ -78,7 +78,7 @@ public class ForecastFragment extends Fragment {
 
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
-        // create an arraylist of string to represent a static weather forecast list
+        // declare arraylist of strings to represent a weather forecast list
         ArrayList<String> weatherArrayList = new ArrayList<>();
 
         // Create array adapter to populate ListView
@@ -90,7 +90,8 @@ public class ForecastFragment extends Fragment {
             // id of textview to populate
             R.id.list_item_forecast_textview,
             // arraylist to get data
-            weatherArrayList);
+            weatherArrayList
+        );
 
         // Bind ListView to ArrayAdapter
         ListView listView = (ListView) rootView.findViewById(R.id.listview_forecast);
@@ -117,6 +118,7 @@ public class ForecastFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
+        // populate listview
         updateWeather();
     }
 
@@ -131,6 +133,10 @@ public class ForecastFragment extends Fragment {
         weatherTask.execute(weatherTaskInput);
     }
 
+    /* Custom Asynctask takes location and temperature unit,
+        parses JSON output,
+        returns String[] of weather data to populate list
+     */
     public class FetchWeatherTask extends AsyncTask<ArrayMap<String, String>, Void, String[]> {
 
         private final String LOG_TAG = FetchWeatherTask.class.getSimpleName();
