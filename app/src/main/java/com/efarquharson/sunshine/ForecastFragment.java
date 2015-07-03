@@ -19,7 +19,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -33,8 +32,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Map;
 
 
 /**
@@ -82,7 +79,7 @@ public class ForecastFragment extends Fragment {
         ArrayList<String> weatherArrayList = new ArrayList<>();
 
         // Create array adapter to populate ListView
-        mForecastAdapter = new ArrayAdapter<String>(
+        mForecastAdapter = new ArrayAdapter<>(
             // context --> fragment's parent activity
             getActivity(),
             // name of xml layout file
