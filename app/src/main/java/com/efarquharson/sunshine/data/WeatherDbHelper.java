@@ -32,10 +32,12 @@ public class WeatherDbHelper extends SQLiteOpenHelper {
 
     static final String DATABASE_NAME = "weather.db";
 
+    // constructor
     public WeatherDbHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
+    // onCreate is only called the first time the db is used
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         final String SQL_CREATE_WEATHER_TABLE = "CREATE TABLE " + WeatherEntry.TABLE_NAME + " (" +
@@ -68,8 +70,19 @@ public class WeatherDbHelper extends SQLiteOpenHelper {
                 // per location, it's created a UNIQUE constraint with REPLACE strategy
                 " UNIQUE (" + WeatherEntry.COLUMN_DATE + ", " +
                 WeatherEntry.COLUMN_LOC_KEY + ") ON CONFLICT REPLACE);";
-
+        // execute SQL table create
         sqLiteDatabase.execSQL(SQL_CREATE_WEATHER_TABLE);
+
+        final String SQL_CREATE_LOCATION_TABLE = "CREATE TABLE " + LocationEntry.TABLE_NAME + " (" +
+                LocationEntry._ID + " INTEGER PRIMARY KEY," +
+
+                LocationEntry.COLUMN_LOCATION_SETTING + " TEXT NOT NULL UNIQUE, " +
+                LocationEntry.COLUMN_COORD_LAT + " REAL NOT NULL, " +
+                LocationEntry.COLUMN_COORD_LONG + " REAL NOT NULL, " +
+                LocationEntry.COLUMN_CITY_NAME + " TEXT NOT NULL " +
+                " );";
+        // execute SQL table create
+        sqLiteDatabase.execSQL(SQL_CREATE_LOCATION_TABLE);
     }
 
     @Override
